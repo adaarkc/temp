@@ -1,0 +1,69 @@
+# Install packages
+
+install.packages("fmsb")
+install.packages("scales")
+
+# Load library 
+
+library(fmsb)
+
+# Basic Radar chart
+
+# Construct the data set (Data from Marvel.com)
+iron_man_data <- data.frame(Strength = c(7, 0, 6),
+                   Speed = c(7, 0, 5),
+                   Intelligence = c(7, 0, 6),
+                   Fighting_Skills = c(7, 0, 4),
+                   Energy = c(7, 0, 6),
+                   Durability = c(7, 0, 6))
+
+radarchart(iron_man_data, 
+           seg = 7,  # Number of axis segments
+           title = "Iron Man Radar Chart",
+           pcol = "#2377ff",
+           pfcol = scales::alpha("#2377ff", 0.3),
+           plwd = 2,
+           # Grid Line Color, Type and Width
+           cglcol= "#636363",
+           cglty = 1,
+           cglwd = 0.7,)
+
+# Radar chart with multiple overlapping individuals
+
+# Construct the data set
+avengers_data <- data.frame(Strength = c(7, 0, 6, 7, 4, 3),
+                   Speed = c(7, 0, 5, 7, 3, 2),
+                   Intelligence = c(7, 0, 6, 2, 4, 3),
+                   Fighting_Skills = c(7, 0, 4, 4, 4, 6),
+                   Energy = c(7, 0, 6, 6, 1, 1),
+                   Durability = c(7, 0, 6, 6, 3, 3),
+                   row.names = c("max", "min", "Iron Man", "Thor", 
+                                 "Spiderman", "Captain America"))
+
+# Define fill colors
+colors_fill <- c(scales::alpha("gray", 0.1),
+                 scales::alpha("gold", 0.1),
+                 scales::alpha("tomato", 0.2),
+                 scales::alpha("skyblue", 0.2))
+
+# Define line colors
+colors_line <- c(scales::alpha("darkgray", 0.9),
+                 scales::alpha("gold", 0.9),
+                 scales::alpha("tomato", 0.9),
+                 scales::alpha("royalblue", 0.9))
+
+# Create plot
+radarchart(avengers_data, 
+           seg = 7,  # Number of axis segments
+           title = "Avengers Radar Chart",
+           pcol = colors_line,
+           pfcol = colors_fill,
+           plwd = 4)
+
+# Add a legend
+legend(x=0.6, 
+       y=1.35, 
+       legend = rownames(data[-c(1,2),]), 
+       bty = "n", pch=20 , col = colors_line, cex = 1.05, pt.cex = 3)
+       
+       
