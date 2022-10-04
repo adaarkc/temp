@@ -1,1 +1,0 @@
-[{"id":2461037679.0,"eventId":18,"minute":0,"second":51,"teamId":23,"playerId":338780,"x":64.3,"y":83.3,"expandedMinute":0}]
