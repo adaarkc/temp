@@ -1,6 +1,0 @@
-library(tidyverse)
-library(jsonlite)
-
-json_data <- read_json(path = 'C:\\path\\test_data_json.txt', simplifyVector = TRUE)
-
-view(json_data)
