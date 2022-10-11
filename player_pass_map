@@ -41,18 +41,48 @@ df_338780 <- df2[,c("playerId", "eventType", "outcome", "x", "y",
 
 view(df_338780)
 
-# Filtering by specific playerId 
+# Filtering by specific playerId and eventType
 
 df_338780 <- filter(df_338780, playerId == "338780" & 
-                      eventType == "Pass" & 
-                      outcome == "Successful")
+                      eventType == "Pass")
 
 view(df_338780)
 
-# New column, Pass_Type, to identify Key Passes 
+# Passes Made Count 
+
+pm <- nrow(df_338780)
+
+pm
+
+# Filtering by outcome 
+
+df_338780 <- filter(df_338780, playerId == "338780" & 
+                      eventType == "Pass" & outcome == "Successful")
+
+view(df_338780)
+
+# Passes Completed  Count 
+
+pc <- nrow(df_338780)
+
+pc 
+
+# Pass Completion Rate (%) calculation  
+
+pcr <- (pc/pm)*100
+
+pcr 
+
+pcr <- round(pcr, digits = 2)
+
+pcr 
+
+# New column, Pass_Type_1, to identify Key Passes 
 
 df_338780$Pass_Type_1 <- ifelse(grepl("KeyPass", df_338780$qualifiers), 
                               "Key Pass", "Pass")
+
+# New column, Pass_Type_2, to identify Progressive Passes 
 
 df_338780$Pass_Type_2 <- ifelse((df_338780$endX - df_338780$x >= 30 & 
                                  df_338780$x < 50 & df_338780$endX < 50) | 
@@ -66,12 +96,23 @@ df_338780$Pass_Type_2 <- ifelse((df_338780$endX - df_338780$x >= 30 &
                                    df_338780$y > 50 & df_338780$endY < df_338780$y),
                               "Progressive Pass", "Pass")
 
-
 view(df_338780)
+
+# Key Passes Count 
+
+kp <- length(which(df_338780$Pass_Type_1 == "Key Pass")) 
+
+kp
+
+#Progressive Passes Count 
+
+pp <- length(which(df_338780$Pass_Type_2 == "Progressive Pass")) 
+
+pp
 
 # Specifying colors for Pass Type 
 
-cols <- c("Key Pass"="#00B6F1", "Pass"="#343434", "Progressive Pass" = "#F18805")
+cols <- c("Key Pass"="#00B6F1", "Pass"="#5D5D5D", "Progressive Pass" = "#F18805")
 
 # Make plot 
 
@@ -83,26 +124,30 @@ pass_map <- ggplot(df_338780)+
                size = 1.5)+
   geom_point(aes(x = endX, y = endY, colour = Pass_Type_1),
              size = 2.5)+
-  coord_flip(xlim=c(0,100),
+  theme_pitch(aspect_ratio = 105/68)+
+  coord_flip(xlim=c(-10,100),
              ylim=c(100,0)) +
   scale_colour_manual(values = cols, aesthetics = c("colour", "fill"))+
-  theme_pitch()+
+  labs(title = "Bruno Guimaraes Pass Map",
+       subtitle = "Newcastle vs Bournemouth\nPremier League 22-23",
+       caption = "Data Source: Opta\nGraphic: @adaarkc")+
+  annotate(geom = "text", x = -2, y = 95, label = paste("Passes: ", pc, "(", pcr, "% Completion Rate)"), 
+           color = "#FFFFFF", size = 6, hjust = "left")+
+  annotate(geom = "text", x = -2, y = 95, label = paste("\n\nProgressive Passes: ", pp), 
+           color = "#F18805", size = 6, hjust = "left")+
+  annotate(geom = "text", x = -2, y = 95, label = paste("\n\n\n\nKey Passes: ", kp), 
+           color = "#00B6F1", size = 6, hjust = "left")+
   theme(panel.background = element_rect(fill = "#191919"),
         plot.background = element_rect(fill = "#191919"), # everything same background color
         legend.background = element_rect(fill = "#191919"), # including legend box
+        plot.title = element_text(color = "#00B6F1", face = "bold", size = 18),
+        plot.subtitle = element_text(color = "#FFFFFF", size = 14),
+        plot.caption = element_text(color = "#FFFFFF", size = 12),
         legend.key = element_rect(fill = "#191919", color = NA), #including legend key box
-        legend.text = element_text(colour="#FFFFFF", size = 6), #legend text
-        legend.title = element_text(colour="#FFFFFF", size = 7),#legend title 
-        legend.position = "bottom")+
-  labs(title = "Bruno Guimaraes Pass Map",
-       subtitle = "Newcastle vs Bournemouth\nPremier League 22-23",
-       caption = "Data Source: Whoscored\nData Viz: @adaarkc")+
-  theme(plot.title = element_text(color = "#00B6F1", face = "bold", size = 10),
-        plot.subtitle = element_text(color = "#FFFFFF", size = 7),
-        plot.caption = element_text(color = "#FFFFFF", size = 5))
+        legend.text = element_text(colour="#FFFFFF", size = 4), #legend text
+        legend.title = element_text(colour="#FFFFFF", size = 5),#legend title 
+        legend.position = "none")
 
 pass_map
 
 ggsave(pass_map, file = "player_pass_338780.png", width = 7, height = 10, dpi = 300)
-
-
