@@ -1,0 +1,40 @@
+library(tidyverse)
+library(ggplot2)
+library(ggsoccer)
+library(readr)
+library(worldfootballR)
+
+
+pos_338780 <- read_csv("C:\\Users\\adaar\\OneDrive\\Documents\\CSVs\\position_data.csv", show_col_types = FALSE)
+
+view(pos_338780)
+
+# Make plot 
+
+pos_heatmap <- ggplot(pos_338780)+
+  annotate_pitch(colour = "#5D5D5D",
+                 fill = "#191919")+
+  stat_bin_2d(aes(x = x, y = y), bins = 10)+
+  theme_pitch(aspect_ratio = 105/68)+
+  coord_flip(xlim=c(0,100),
+             ylim=c(100,0))+
+  scale_fill_gradient(low = "#003D51", high = "#00B6F1")+
+  labs(title = "Bruno Guimaraes Position Heatmap",
+       subtitle = "Newcastle vs Bournemouth\nPremier League 22-23",
+       caption = "Data Source: Opta\nGraphic: @adaarkc")+
+  theme(panel.background = element_rect(fill = "#191919"),
+        plot.background = element_rect(fill = "#191919"), # everything same background color
+        legend.background = element_rect(fill = "#191919"), # including legend box
+        plot.title = element_text(color = "#00B6F1", face = "bold", size = 18),
+        plot.subtitle = element_text(color = "#FFFFFF", size = 14),
+        plot.caption = element_text(color = "#FFFFFF", size = 12),
+        legend.key = element_rect(fill = "#191919", color = NA), #including legend key box
+        legend.text = element_text(colour="#FFFFFF", size = 6), #legend text
+        legend.title = element_text(colour="#FFFFFF", size = 7),#legend title 
+        legend.position = "none") # "None" to have legend not show 
+
+pos_heatmap
+
+ggsave(pos_heatmap, file = "player_pos_map.png", width = 7, height = 10, dpi = 300)
+
+
